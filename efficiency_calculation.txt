@@ -1,0 +1,44 @@
+--- Efficiency Report ---
+
+Efficiency: 0.0%
+
+         Input: 12.4W @ 11.7V
+      Output: 0W @ 0V
+
+Ref.	      Irms	    Ipeak	 Dissipation
+C1	      0mA	      0mA	      0mW
+C2	      0mA	      0mA	      0mW
+C3	      0mA	      0mA	      0mW
+C4	    63mA	  891mA	      0mW
+C5	      0mA	      0mA	      0mW
+C6	    44mA	  741mA	      0mW
+C7	    39mA	  742mA	      0mW
+C8	  101mA	2627mA	      0mW
+C9	  100mA	2366mA	      0mW
+C10	  101mA	2627mA	      0mW
+C11	  100mA	2366mA	      0mW
+C12	  101mA	2627mA	      0mW
+C13	  101mA	2627mA	      0mW
+C14	  100mA	2366mA	      0mW
+C15	  100mA	2366mA	      0mW
+D1	1048mA	1054mA	12016mW
+D2	    13mA	    80mA	      1mW
+D3	    22mA	  177mA	      2mW
+L1	1149mA	1421mA	    14mW
+L2	1063mA	1082mA	    23mW
+Q1	1123mA	10485mA	    62mW
+Q2	  315mA	9463mA	    17mW
+Q3	  335mA	10456mA	    57mW
+Q4	1124mA	9467mA	    22mW
+Q5	1048mA	1054mA	      3mW
+R2	      0mA	      0mA	  321µW
+R3	      0mA	      0mA	    61µW
+R4	      0mA	      0mA	      0µW
+R7	      0mA	      0mA	    12µW
+R8	  465mA	11033mA	      2mW
+R9	      0mA	      0mA	  112µW
+R10	      0mA	      0mA	    10µW
+R11	1048mA	1054mA	    55mW
+R14	      0mA	      0mA	    16µW
+R15	      0mA	      0mA	      9µW
+U1	    65mA	  951mA	  155mW
