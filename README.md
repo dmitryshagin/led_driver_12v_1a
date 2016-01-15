@@ -14,8 +14,10 @@ I've also added Attiny24 to control PWM input and monitor input voltage. It can 
 
 You can download [gerbers](binaries/led_driver_12v_1a.zip?raw=true) to order this PCB from [SeedStudio](http://www.seeedstudio.com/service/index.php?r=pcb) - it's very cheap and has nice quality.
 
+[BOM](https://www.digikey.com/classic/RegisteredUser/BOMBillOfMaterials.aspx?path=1&exist=1&id=3307608) - only for registered DigiKey users. Total cost is nearly $27 now.
 
-Yo'll get something liki this:
+
+Yo'll get something like this:
 
 ![top](binaries/top.png)
 
