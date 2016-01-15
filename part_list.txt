@@ -1,0 +1,20 @@
+C1,C2   22nF  (0402)
+C3      470nF (0402)
+C4,C8-C16 4.7uF (Kemet C1206C475K3RACTU)
+C5,C6,C7 0.1uF (0402)
+D1-D3    BAT46-WJ
+L1       4.7u (744771004)
+L2       1000n (Bourns Inc. SRR7045-1R0M)
+Q1-Q5    BSZ0902NSI
+Q6       SSM3K2615R
+R4       50
+R1       10k
+R3,R6,R15    56.9k
+R7,R10       86.6k
+R5,R14       100k
+R2       300k
+R9       1Meg
+R8       10m (Riedon CSR1206-0R001F1) (1206)
+R11      50m (Ohmite MCS1632R005FER) (1206)
+U1      LT3791  TSSOP38
+U2      ATTINY24A (QFN)

@@ -8,20 +8,20 @@
 </settings>
 <grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="no" altdistance="0.01" altunitdist="inch" altunit="inch"/>
 <layers>
-<layer number="1" name="Top" color="4" fill="1" visible="yes" active="no"/>
-<layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="no"/>
-<layer number="17" name="Pads" color="2" fill="1" visible="yes" active="no"/>
-<layer number="18" name="Vias" color="2" fill="1" visible="yes" active="no"/>
-<layer number="19" name="Unrouted" color="6" fill="1" visible="yes" active="no"/>
-<layer number="20" name="Dimension" color="15" fill="1" visible="yes" active="no"/>
-<layer number="21" name="tPlace" color="7" fill="1" visible="yes" active="no"/>
-<layer number="22" name="bPlace" color="7" fill="1" visible="yes" active="no"/>
-<layer number="23" name="tOrigins" color="15" fill="1" visible="yes" active="no"/>
-<layer number="24" name="bOrigins" color="15" fill="1" visible="yes" active="no"/>
-<layer number="25" name="tNames" color="7" fill="1" visible="yes" active="no"/>
-<layer number="26" name="bNames" color="7" fill="1" visible="yes" active="no"/>
-<layer number="27" name="tValues" color="7" fill="1" visible="yes" active="no"/>
-<layer number="28" name="bValues" color="7" fill="1" visible="yes" active="no"/>
+<layer number="1" name="Top" color="4" fill="1" visible="no" active="no"/>
+<layer number="16" name="Bottom" color="1" fill="1" visible="no" active="no"/>
+<layer number="17" name="Pads" color="2" fill="1" visible="no" active="no"/>
+<layer number="18" name="Vias" color="2" fill="1" visible="no" active="no"/>
+<layer number="19" name="Unrouted" color="6" fill="1" visible="no" active="no"/>
+<layer number="20" name="Dimension" color="15" fill="1" visible="no" active="no"/>
+<layer number="21" name="tPlace" color="7" fill="1" visible="no" active="no"/>
+<layer number="22" name="bPlace" color="7" fill="1" visible="no" active="no"/>
+<layer number="23" name="tOrigins" color="15" fill="1" visible="no" active="no"/>
+<layer number="24" name="bOrigins" color="15" fill="1" visible="no" active="no"/>
+<layer number="25" name="tNames" color="7" fill="1" visible="no" active="no"/>
+<layer number="26" name="bNames" color="7" fill="1" visible="no" active="no"/>
+<layer number="27" name="tValues" color="7" fill="1" visible="no" active="no"/>
+<layer number="28" name="bValues" color="7" fill="1" visible="no" active="no"/>
 <layer number="29" name="tStop" color="7" fill="3" visible="no" active="no"/>
 <layer number="30" name="bStop" color="7" fill="6" visible="no" active="no"/>
 <layer number="31" name="tCream" color="7" fill="4" visible="no" active="no"/>
@@ -30,8 +30,8 @@
 <layer number="34" name="bFinish" color="6" fill="6" visible="no" active="no"/>
 <layer number="35" name="tGlue" color="7" fill="4" visible="no" active="no"/>
 <layer number="36" name="bGlue" color="7" fill="5" visible="no" active="no"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="no"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="no"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="no" active="no"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="no" active="no"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="no" active="no"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="no" active="no"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="no" active="no"/>
@@ -39,19 +39,19 @@
 <layer number="43" name="vRestrict" color="2" fill="10" visible="no" active="no"/>
 <layer number="44" name="Drills" color="7" fill="1" visible="no" active="no"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="no" active="no"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="no"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="no"/>
-<layer number="48" name="Document" color="7" fill="1" visible="yes" active="no"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="no"/>
-<layer number="50" name="dxf" color="7" fill="1" visible="yes" active="no"/>
-<layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="no"/>
-<layer number="52" name="bDocu" color="7" fill="1" visible="yes" active="no"/>
-<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="yes" active="no"/>
-<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="yes" active="no"/>
-<layer number="56" name="wert" color="7" fill="1" visible="yes" active="no"/>
-<layer number="57" name="tCAD" color="7" fill="1" visible="yes" active="no"/>
-<layer number="59" name="tCarbon" color="7" fill="1" visible="yes" active="no"/>
-<layer number="60" name="bCarbon" color="7" fill="1" visible="yes" active="no"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="no" active="no"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="no" active="no"/>
+<layer number="48" name="Document" color="7" fill="1" visible="no" active="no"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="no" active="no"/>
+<layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
+<layer number="51" name="tDocu" color="7" fill="1" visible="no" active="no"/>
+<layer number="52" name="bDocu" color="7" fill="1" visible="no" active="no"/>
+<layer number="53" name="tGND_GNDA" color="7" fill="9" visible="no" active="no"/>
+<layer number="54" name="bGND_GNDA" color="1" fill="9" visible="no" active="no"/>
+<layer number="56" name="wert" color="7" fill="1" visible="no" active="no"/>
+<layer number="57" name="tCAD" color="7" fill="1" visible="no" active="no"/>
+<layer number="59" name="tCarbon" color="7" fill="1" visible="no" active="no"/>
+<layer number="60" name="bCarbon" color="7" fill="1" visible="no" active="no"/>
 <layer number="90" name="Modules" color="5" fill="1" visible="yes" active="yes"/>
 <layer number="91" name="Nets" color="2" fill="1" visible="yes" active="yes"/>
 <layer number="92" name="Busses" color="1" fill="1" visible="yes" active="yes"/>
@@ -13347,7 +13347,7 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <part name="C11" library="rcl" deviceset="C-EU" device="C1206" value="4.7uF, 25V, Low ESR (Kemet C1206C475K3RACTU)"/>
 <part name="C15" library="rcl" deviceset="C-EU" device="C1206" value="4.7uF, 25V, Low ESR (Kemet C1206C475K3RACTU)"/>
 <part name="C14" library="rcl" deviceset="C-EU" device="C1206" value="4.7uF, 25V, Low ESR (Kemet C1206C475K3RACTU)"/>
-<part name="C4" library="rcl" deviceset="C-EU" device="C1206" value="4.7uF, 25V, Low ESR (Kemet C1206C475K3RACTU)"/>
+<part name="C4" library="rcl" deviceset="C-EU" device="C1206" value="4.7uF"/>
 <part name="C10" library="rcl" deviceset="C-EU" device="C1206" value="4.7uF, 25V, Low ESR (Kemet C1206C475K3RACTU)"/>
 <part name="C13" library="rcl" deviceset="C-EU" device="C1206" value="4.7uF, 25V, Low ESR (Kemet C1206C475K3RACTU)"/>
 <part name="C8" library="rcl" deviceset="C-EU" device="C1206" value="4.7uF, 25V, Low ESR (Kemet C1206C475K3RACTU)"/>
@@ -13403,7 +13403,7 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <part name="R5" library="resistor" deviceset="R-EU_" device="R0402" value="100k"/>
 <part name="R6" library="resistor" deviceset="R-EU_" device="R0402" value="56.9k"/>
 <part name="SUPPLY10" library="supply2" deviceset="DGND" device=""/>
-<part name="C16" library="rcl" deviceset="C-EU" device="C1206" value="4.7uF, 25V, Low ESR (Kemet C1206C475K3RACTU)"/>
+<part name="C16" library="rcl" deviceset="C-EU" device="C1206" value="4.7uF"/>
 <part name="SUPPLY11" library="supply2" deviceset="DGND" device=""/>
 <part name="PAD1" library="wirepad" deviceset="WIREPAD" device="SMD5-2,5" value="LED-"/>
 <part name="PAD2" library="wirepad" deviceset="WIREPAD" device="SMD5-2,5" value="LED+"/>
@@ -13414,28 +13414,15 @@ new: Attribute TP_SIGNAL_NAME&lt;br&gt;
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
 <part name="GND6" library="supply1" deviceset="GND" device=""/>
 <part name="PAD5" library="wirepad" deviceset="WIREPAD" device="SMD1,27-254" value="GND"/>
-<part name="TP1" library="testpad" deviceset="TP" device="TP11R" value="TPTP11R"/>
-<part name="TP2" library="testpad" deviceset="TP" device="TP11R" value="TPTP11R"/>
-<part name="TP3" library="testpad" deviceset="TP" device="TP11R" value="TPTP11R"/>
-<part name="TP4" library="testpad" deviceset="TP" device="TP11R" value="TPTP11R"/>
-<part name="TP6" library="testpad" deviceset="TP" device="TP11R" value="TPTP11R"/>
+<part name="MISO" library="testpad" deviceset="TP" device="TP11R" value="TPTP11R"/>
+<part name="SCK" library="testpad" deviceset="TP" device="TP11R" value="TPTP11R"/>
+<part name="MOSI" library="testpad" deviceset="TP" device="TP11R" value="TPTP11R"/>
+<part name="RST" library="testpad" deviceset="TP" device="TP11R" value="TPTP11R"/>
+<part name="VCC" library="testpad" deviceset="TP" device="TP11R" value="TPTP11R"/>
 </parts>
 <sheets>
 <sheet>
 <plain>
-<text x="86.36" y="10.16" size="1.778" layer="91">CURRENTS:
-TG1,TG2,BG1,BG2,SW1,SW2,BST1,BST2,PGND - +-1A pulses, 0.02us every 4us
-
-SGND - 75mA pulses, 0.02us every 4us
-VIN - ~50mA RMS, 70mA pulses
-
-
-Q1,Q2,Q3,Q4 sources and drains - 10A pulses, 0.01us every 4us
-
-R8 peak current - 11A
-
-other signals - uA or even nA</text>
-<text x="0" y="2.54" size="1.778" layer="91" rot="MR270">СОЕДИНИТЬ ЗЕМЛИ В ОДНОЙ ТОЧКЕ!</text>
 </plain>
 <instances>
 <instance part="Q1" gate="G$1" x="-50.8" y="76.2"/>
@@ -13443,19 +13430,43 @@ other signals - uA or even nA</text>
 <instance part="Q2" gate="G$1" x="-50.8" y="50.8"/>
 <instance part="Q3" gate="G$1" x="5.08" y="50.8" rot="MR0"/>
 <instance part="Q5" gate="G$1" x="45.72" y="50.8"/>
-<instance part="R8" gate="G$1" x="-22.86" y="35.56" rot="R90"/>
-<instance part="R11" gate="G$1" x="48.26" y="81.28" rot="R270"/>
+<instance part="R8" gate="G$1" x="-22.86" y="35.56" smashed="yes" rot="R90">
+<attribute name="NAME" x="-24.3586" y="31.75" size="1.778" layer="95" rot="R90"/>
+<attribute name="VALUE" x="-19.558" y="19.05" size="1.778" layer="96" rot="R90"/>
+</instance>
+<instance part="R11" gate="G$1" x="48.26" y="81.28" smashed="yes" rot="R270">
+<attribute name="NAME" x="49.7586" y="85.09" size="1.778" layer="95" rot="R270"/>
+<attribute name="VALUE" x="55.118" y="100.33" size="1.778" layer="96" rot="R270"/>
+</instance>
 <instance part="D2" gate="G$1" x="-20.32" y="99.06" rot="R270"/>
 <instance part="D3" gate="G$1" x="-40.64" y="99.06" rot="R270"/>
-<instance part="C9" gate="G$1" x="-71.12" y="-50.8"/>
-<instance part="C11" gate="G$1" x="-63.5" y="-50.8"/>
-<instance part="C15" gate="G$1" x="-55.88" y="-50.8"/>
-<instance part="C14" gate="G$1" x="-48.26" y="-50.8"/>
+<instance part="C9" gate="G$1" x="-71.12" y="-50.8" smashed="yes">
+<attribute name="NAME" x="-69.596" y="-50.419" size="1.778" layer="95"/>
+<attribute name="VALUE" x="-69.596" y="-63.119" size="1.778" layer="96"/>
+</instance>
+<instance part="C11" gate="G$1" x="-63.5" y="-50.8" smashed="yes">
+<attribute name="NAME" x="-61.976" y="-50.419" size="1.778" layer="95"/>
+</instance>
+<instance part="C15" gate="G$1" x="-55.88" y="-50.8" smashed="yes">
+<attribute name="NAME" x="-54.356" y="-50.419" size="1.778" layer="95"/>
+</instance>
+<instance part="C14" gate="G$1" x="-48.26" y="-50.8" smashed="yes">
+<attribute name="NAME" x="-46.736" y="-50.419" size="1.778" layer="95"/>
+</instance>
 <instance part="C4" gate="G$1" x="-7.62" y="99.06"/>
-<instance part="C10" gate="G$1" x="20.32" y="83.82"/>
-<instance part="C13" gate="G$1" x="27.94" y="83.82"/>
-<instance part="C8" gate="G$1" x="35.56" y="83.82"/>
-<instance part="C12" gate="G$1" x="43.18" y="83.82"/>
+<instance part="C10" gate="G$1" x="20.32" y="83.82" smashed="yes">
+<attribute name="NAME" x="21.844" y="84.201" size="1.778" layer="95"/>
+<attribute name="VALUE" x="-6.096" y="86.741" size="1.778" layer="96"/>
+</instance>
+<instance part="C13" gate="G$1" x="27.94" y="83.82" smashed="yes">
+<attribute name="NAME" x="29.464" y="84.201" size="1.778" layer="95"/>
+</instance>
+<instance part="C8" gate="G$1" x="35.56" y="83.82" smashed="yes">
+<attribute name="NAME" x="37.084" y="84.201" size="1.778" layer="95"/>
+</instance>
+<instance part="C12" gate="G$1" x="43.18" y="83.82" smashed="yes">
+<attribute name="NAME" x="44.704" y="84.201" size="1.778" layer="95"/>
+</instance>
 <instance part="U$1" gate="G$1" x="5.08" y="-33.02"/>
 <instance part="L1" gate="G$1" x="-30.48" y="63.5"/>
 <instance part="C6" gate="G$1" x="-40.64" y="68.58"/>
@@ -13518,11 +13529,11 @@ other signals - uA or even nA</text>
 <instance part="GND5" gate="1" x="0" y="2.54" rot="MR0"/>
 <instance part="GND6" gate="1" x="5.08" y="27.94" rot="MR180"/>
 <instance part="PAD5" gate="G$1" x="-15.24" y="35.56" rot="R270"/>
-<instance part="TP1" gate="G$1" x="-134.62" y="33.02" rot="R90"/>
-<instance part="TP2" gate="G$1" x="-134.62" y="30.48" rot="R90"/>
-<instance part="TP3" gate="G$1" x="-134.62" y="27.94" rot="R90"/>
-<instance part="TP4" gate="G$1" x="-134.62" y="25.4" rot="R90"/>
-<instance part="TP6" gate="G$1" x="-134.62" y="20.32" rot="R90"/>
+<instance part="MISO" gate="G$1" x="-134.62" y="33.02" rot="R90"/>
+<instance part="SCK" gate="G$1" x="-134.62" y="30.48" rot="R90"/>
+<instance part="MOSI" gate="G$1" x="-134.62" y="27.94" rot="R90"/>
+<instance part="RST" gate="G$1" x="-134.62" y="25.4" rot="R90"/>
+<instance part="VCC" gate="G$1" x="-134.62" y="20.32" rot="R90"/>
 </instances>
 <busses>
 <bus name="BG1,BG2,SW1,SW2,TG1,TG2,BST1,BST2,INTVCC">
@@ -14074,7 +14085,7 @@ other signals - uA or even nA</text>
 <wire x1="-154.94" y1="10.16" x2="-154.94" y2="25.4" width="0.1524" layer="91"/>
 <wire x1="-154.94" y1="25.4" x2="-157.48" y2="25.4" width="0.1524" layer="91"/>
 <junction x="-157.48" y="25.4"/>
-<pinref part="TP6" gate="G$1" pin="TP"/>
+<pinref part="VCC" gate="G$1" pin="TP"/>
 </segment>
 </net>
 <net name="N$13" class="0">
@@ -14116,7 +14127,7 @@ other signals - uA or even nA</text>
 <wire x1="-114.3" y1="22.86" x2="-121.92" y2="22.86" width="0.1524" layer="91"/>
 <wire x1="-121.92" y1="22.86" x2="-121.92" y2="33.02" width="0.1524" layer="91"/>
 <wire x1="-121.92" y1="33.02" x2="-132.08" y2="33.02" width="0.1524" layer="91"/>
-<pinref part="TP1" gate="G$1" pin="TP"/>
+<pinref part="MISO" gate="G$1" pin="TP"/>
 </segment>
 </net>
 <net name="N$17" class="0">
@@ -14125,7 +14136,7 @@ other signals - uA or even nA</text>
 <wire x1="-114.3" y1="20.32" x2="-124.46" y2="20.32" width="0.1524" layer="91"/>
 <wire x1="-124.46" y1="20.32" x2="-124.46" y2="27.94" width="0.1524" layer="91"/>
 <wire x1="-124.46" y1="27.94" x2="-132.08" y2="27.94" width="0.1524" layer="91"/>
-<pinref part="TP3" gate="G$1" pin="TP"/>
+<pinref part="MOSI" gate="G$1" pin="TP"/>
 </segment>
 </net>
 <net name="N$18" class="0">
@@ -14134,7 +14145,7 @@ other signals - uA or even nA</text>
 <wire x1="-114.3" y1="5.08" x2="-127" y2="5.08" width="0.1524" layer="91"/>
 <wire x1="-127" y1="5.08" x2="-127" y2="25.4" width="0.1524" layer="91"/>
 <wire x1="-127" y1="25.4" x2="-132.08" y2="25.4" width="0.1524" layer="91"/>
-<pinref part="TP4" gate="G$1" pin="TP"/>
+<pinref part="RST" gate="G$1" pin="TP"/>
 </segment>
 </net>
 <net name="N$20" class="0">
@@ -14143,7 +14154,7 @@ other signals - uA or even nA</text>
 <wire x1="-119.38" y1="30.48" x2="-119.38" y2="25.4" width="0.1524" layer="91"/>
 <pinref part="U$2" gate="G$1" pin="PA4/SCL"/>
 <wire x1="-119.38" y1="25.4" x2="-114.3" y2="25.4" width="0.1524" layer="91"/>
-<pinref part="TP2" gate="G$1" pin="TP"/>
+<pinref part="SCK" gate="G$1" pin="TP"/>
 </segment>
 </net>
 <net name="N$19" class="0">
@@ -14163,10 +14174,4 @@ other signals - uA or even nA</text>
 </sheets>
 </schematic>
 </drawing>
-<compatibility>
-<note version="6.3" minversion="6.2.2" severity="warning">
-Since Version 6.2.2 text objects can contain more than one line,
-which will not be processed correctly with this version.
-</note>
-</compatibility>
 </eagle>
