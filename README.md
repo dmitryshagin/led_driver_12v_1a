@@ -29,3 +29,19 @@ You can also take a look at LTSpice IV simulation and efficiency report. Schemat
 
 ![top](binaries/schematic.png)
 
+
+**Changes required to use XHP70:**
+
+It is very easy to modify this driver for XHP70 LED (12V version, at 2.4A). Modifications are simple:
+
+* change R11 to 0.033 Ohm (sized 1206, power rating - 0.5 to 1W). Something like Panasonic ERJ-8BWFR033V. It will limit driver output current to 3A
+* change R15 to 100k (0402 size) to fine-tune output current at 2.4A.
+* change L1 to 10uH with sauration current at least 4A. Wurth Electronics 7447709100 will fit perfectly
+* you can also remove L2 to boost efficiency to >98%, but it requires good wireing and low battery impedance (input current will pulse between 2.7 and 3.5Amps (with spikes to 10-15Amps) for 0.01 Ohm battery impedance). Instead we loose ~0.2W at L2, but have no power pulsation on input (<0.04A & stable input current 3.2A).
+
+LTSpice simulation results:
+
+* input power: 36.3W @ 11.7V
+* output power: 35.5W @ 2.42A
+* calculated efficiency: 97.8%
+* LED current pulses: <1.7%
