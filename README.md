@@ -23,6 +23,11 @@ Yo'll get something like this:
 
 Board is 19.5x35mm and it should generate almost no heat - calculated efficiency is >96.5% and power loss is around 0.4W at 13W output.
 
+
+It's also round version (32mm):
+
+![round](binaries/round.png)
+
 [Part List](part_list.txt?raw=true) is also included.
 
 You can also take a look at LTSpice IV simulation and efficiency report. Schematic and PCB created with [Eagle 7.5](http://www.cadsoftusa.com/). It's not as nice and clean as I wanted it to be, but it should do the job.
