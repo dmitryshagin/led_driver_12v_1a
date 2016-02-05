@@ -12541,7 +12541,7 @@ Source: http://www.molex.com/pdm_docs/sd/877580616_sd.pdf</description>
 <sheet>
 <plain>
 <text x="-73.66" y="12.7" size="1.778" layer="91">The ESR, of the COUT capacitor must at
- least 300 mΩ, but no more than 8 Ω </text>
+ least 300 mΩ, but no more than 8 Ω</text>
 <text x="-17.78" y="35.56" size="1.778" layer="91">WARNING! SOLDER R8 TO GROUND MANUALLY!</text>
 </plain>
 <instances>
