@@ -43,6 +43,12 @@ typedef struct SYSTEM_CONFIG{
 	uint16_t times_low;
 	uint16_t times_med;
 	uint16_t times_high;
+	uint16_t max_idle;
+	uint16_t max_overtemp;
+	uint16_t max_low_voltage;
+	uint16_t max_low;
+	uint16_t max_med;
+	uint16_t max_high;
 } systemConfig_t;
 
 struct SYSTEM_CONFIG nv_system_config EEMEM = {0,0,0,0,0,0, 0,0,0,0,0,0};
@@ -128,11 +134,17 @@ int apply_power(void){
 		if(prev_power_mode==MODE_LOW)		 {system_config.seconds_low+=seconds;         system_config.times_low+=1;        }
 		if(prev_power_mode==MODE_HALF)		 {system_config.seconds_med+=seconds;         system_config.times_med+=1;        }
 		if(prev_power_mode==MODE_FULL)		 {system_config.seconds_high+=seconds;        system_config.times_high+=1;       }
-		prev_power_mode=power_mode;
 		if(power_mode==MODE_LOW_VOLTAGE||power_mode==MODE_OFF){
 			//will store data only on power off or low batt to save eeprom
+			if( system_config.max_idle        < seconds && prev_power_mode == MODE_IDLE)       { system_config.max_idle        = seconds; }
+			if( system_config.max_low_voltage < seconds && prev_power_mode == MODE_LOW_VOLTAGE){ system_config.max_low_voltage = seconds; }
+			if( system_config.max_overtemp    < seconds && prev_power_mode == MODE_OVERTEMP)   { system_config.max_overtemp    = seconds; }
+			if( system_config.max_low         < seconds && prev_power_mode == MODE_LOW)        { system_config.max_low         = seconds; }
+			if( system_config.max_med         < seconds && prev_power_mode == MODE_HALF)       { system_config.max_med         = seconds; }
+			if( system_config.max_high        < seconds && prev_power_mode == MODE_FULL)       { system_config.max_high        = seconds; }
 			eeprom_write_block(&system_config, &nv_system_config, sizeof(system_config));
 		}
+		prev_power_mode=power_mode;
 		seconds=0;
 	}
 	
