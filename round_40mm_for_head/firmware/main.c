@@ -30,30 +30,13 @@ volatile uint8_t power_mode, prev_power_mode, unlock_stage, d_seconds, adc_chann
 volatile uint16_t val;
 volatile uint32_t seconds;
 
-typedef struct SYSTEM_CONFIG{
-	uint32_t seconds_idle;
-	uint32_t seconds_overtemp;
-	uint32_t seconds_low_voltage;
-	uint32_t seconds_low;
-	uint32_t seconds_med;
-	uint32_t seconds_high;
-	uint16_t times_idle;
-	uint16_t times_overtemp;
-	uint16_t times_low_voltage;
-	uint16_t times_low;
-	uint16_t times_med;
-	uint16_t times_high;
-	uint16_t max_idle;
-	uint16_t max_overtemp;
-	uint16_t max_low_voltage;
-	uint16_t max_low;
-	uint16_t max_med;
-	uint16_t max_high;
-} systemConfig_t;
+uint32_t nv_seconds_on[] EEMEM = {0,0,0,0,0,0,0};
+uint16_t nv_times_on[]   EEMEM = {0,0,0,0,0,0,0};
+uint16_t nv_max_on[]     EEMEM = {0,0,0,0,0,0,0};
 
-struct SYSTEM_CONFIG nv_system_config EEMEM = {0,0,0,0,0,0, 0,0,0,0,0,0};
-struct SYSTEM_CONFIG system_config;
-// struct SYSTEM_CONFIG stored_system_config;
+uint32_t seconds_on[7];
+uint16_t times_on[7];
+uint16_t max_on[7];
 
 ISR(ADC_vect){
 	uint8_t theLowADC = ADCL;
@@ -102,7 +85,7 @@ void stop_timer(){
 
 int apply_power(void){
 	if(unlock_stage>0){
-		GREEN_ON;
+		RED_ON;
 	}
 	if(unlock_stage==3){ //unlock finished
 		power_mode = MODE_IDLE;
@@ -128,21 +111,16 @@ int apply_power(void){
 	if(power_mode==MODE_FULL)		{OCR0B=255;}
 
 	if(prev_power_mode!=power_mode){
-		if(prev_power_mode==MODE_IDLE)		 {system_config.seconds_idle+=seconds;        system_config.times_idle+=1;       }
-		if(prev_power_mode==MODE_LOW_VOLTAGE){system_config.seconds_low_voltage+=seconds; system_config.times_low_voltage+=1;}
-		if(prev_power_mode==MODE_OVERTEMP)	 {system_config.seconds_overtemp+=seconds;    system_config.times_overtemp+=1;   }
-		if(prev_power_mode==MODE_LOW)		 {system_config.seconds_low+=seconds;         system_config.times_low+=1;        }
-		if(prev_power_mode==MODE_HALF)		 {system_config.seconds_med+=seconds;         system_config.times_med+=1;        }
-		if(prev_power_mode==MODE_FULL)		 {system_config.seconds_high+=seconds;        system_config.times_high+=1;       }
+		seconds_on[prev_power_mode] += seconds;
+		times_on[prev_power_mode] += 1;
+		if(max_on[prev_power_mode] < seconds){
+			max_on[prev_power_mode] = seconds;
+		}		
 		if(power_mode==MODE_LOW_VOLTAGE||power_mode==MODE_OFF){
 			//will store data only on power off or low batt to save eeprom
-			if( system_config.max_idle        < seconds && prev_power_mode == MODE_IDLE)       { system_config.max_idle        = seconds; }
-			if( system_config.max_low_voltage < seconds && prev_power_mode == MODE_LOW_VOLTAGE){ system_config.max_low_voltage = seconds; }
-			if( system_config.max_overtemp    < seconds && prev_power_mode == MODE_OVERTEMP)   { system_config.max_overtemp    = seconds; }
-			if( system_config.max_low         < seconds && prev_power_mode == MODE_LOW)        { system_config.max_low         = seconds; }
-			if( system_config.max_med         < seconds && prev_power_mode == MODE_HALF)       { system_config.max_med         = seconds; }
-			if( system_config.max_high        < seconds && prev_power_mode == MODE_FULL)       { system_config.max_high        = seconds; }
-			eeprom_write_block(&system_config, &nv_system_config, sizeof(system_config));
+			eeprom_write_block(&seconds_on, &nv_seconds_on, sizeof(seconds_on));
+			eeprom_write_block(&times_on,   &nv_times_on,   sizeof(times_on) );
+			eeprom_write_block(&max_on,     &nv_max_on,     sizeof(max_on)   );
 		}
 		prev_power_mode=power_mode;
 		seconds=0;
@@ -202,9 +180,11 @@ int main(void){
 	// PB0 - out (EN)
 	// PB1 - hall1, PB2 - hall2
 
-	DDRA  = 0b11111110;
-	DDRB  = 0b0001;
-	PORTB  = 0b0111;
+	DDRA   = 0b11111110;
+	PORTA  = 0b00000001;
+	
+	DDRB   = 0b0001;
+	PORTB  = 0b0110;
 
 	TCCR0A = (1 << COM0B1) | (1 << WGM00);// | (1 << WGM01);  		// PWM mode
 	TCCR0B = (1 << CS01);							// clock source = CLK/8, start PWM
@@ -223,10 +203,12 @@ int main(void){
 	DRIVER_ON;
 	OCR0B = 8;
 	_delay_ms(500);
-	while(1){};
-	// all_off();
+	// while(1){};
+	all_off();
 
-	eeprom_read_block((void*)&system_config, (const void*)&nv_system_config, sizeof(system_config));
+	eeprom_read_block(&seconds_on, &nv_seconds_on, sizeof(seconds_on));
+	eeprom_read_block(&times_on,   &nv_times_on,   sizeof(times_on)  );
+	eeprom_read_block(&max_on,     &nv_max_on,     sizeof(max_on)    );
 	prev_power_mode = MODE_OFF;
 	sei();
 
@@ -249,72 +231,73 @@ int main(void){
 		if(seconds>1 && power_mode==MODE_OFF){
 			all_off();
 		}
-
-		if(d_seconds==0){
-			adc_channel = 0;
-			ADMUX = 0b10000000; // ADC0 - int
-		}	
-		if(d_seconds==5){	
-			adc_channel = 1;
-			ADMUX = 0b10100010; // int reference and temp sensor
-		}
-
-		if(seconds%2==0){
-			if(power_mode==MODE_LOW_VOLTAGE){
-				RED_ON;GREEN_OFF;BLUE_OFF;
-			}
-			if(power_mode==MODE_OVERTEMP){
-				RED_ON;GREEN_ON;BLUE_OFF;
-			}
-		}else{
-			if(power_mode==MODE_OVERTEMP||power_mode==MODE_LOW_VOLTAGE){
-				RED_OFF;GREEN_OFF;BLUE_OFF;
-			}
-		}
-
-
-		// if((seconds%5==0) && ADMUX == 0b10000000){ //measure voltage in active mode
-		if(adc_channel ==0 && d_seconds == 4){ //measure voltage in active mode
-			if(val<714){
-				all_off();//completely discharged. turning off
-			}
-			if(power_mode!=MODE_OVERTEMP){ //show voltage always, except overtemp
-				if(val<755){
-					if(power_mode>=MODE_LOW){ // усвловие нужно, чтобы не задалбывать функцию - в ней будут логи
-						power_mode = MODE_LOW_VOLTAGE;//low voltage
-						apply_power();
-					}	
-				}else if(val<793){
-					RED_ON;
-					GREEN_OFF;
-					BLUE_OFF;
-				}else if(val<872){
-					RED_OFF;
-					GREEN_OFF;
-					BLUE_ON;
-				}else{
-					RED_OFF;
-					BLUE_OFF;
-					GREEN_ON;	
-				}
+		if(unlock_stage==0){
+			if(d_seconds==0){
+				adc_channel = 0;
+				ADMUX = 0b10000000; // ADC0 - int
 			}	
-		}
-
-		if(adc_channel ==1 && d_seconds == 8){ //measure temp in active mode
-			if(val>330 && power_mode>=MODE_LOW ){// усвловие нужно, чтобы не задалбывать функцию - в ней будут логи
-				power_mode = MODE_OVERTEMP;
-				apply_power(); //overtemp. reduce current cunsumption
+			if(d_seconds==5){	
+				adc_channel = 1;
+				ADMUX = 0b10100010; // int reference and temp sensor
 			}
-		}
 
-		if(power_mode==MODE_IDLE && seconds>=7200){ //выключение через два часа из режима простоя
-			all_off();
-		}
+			if(seconds%2==0){
+				if(power_mode==MODE_LOW_VOLTAGE){
+					RED_ON;GREEN_OFF;BLUE_OFF;
+				}
+				if(power_mode==MODE_OVERTEMP){
+					RED_ON;GREEN_ON;BLUE_OFF;
+				}
+			}else{
+				if(power_mode==MODE_OVERTEMP||power_mode==MODE_LOW_VOLTAGE){
+					RED_OFF;GREEN_OFF;BLUE_OFF;
+				}
+			}
 
-		if(seconds==0 && d_seconds<5 && power_mode>=MODE_LOW){
-			GIMSK = 0;//вырубим прерывания на первые 500мс, чтобы не кнопать кнопкой сильно часто
-		}else{
-			GIMSK = (1<<PCIE1);//interrupt on pin change0
-		}
+
+			// if((seconds%5==0) && ADMUX == 0b10000000){ //measure voltage in active mode
+			if(adc_channel ==0 && d_seconds == 4){ //measure voltage in active mode
+				if(val<714){
+					all_off();//completely discharged. turning off
+				}
+				if(power_mode!=MODE_OVERTEMP){ //show voltage always, except overtemp
+					if(val<755){
+						if(power_mode>=MODE_LOW){ // усвловие нужно, чтобы не задалбывать функцию - в ней будут логи
+							power_mode = MODE_LOW_VOLTAGE;//low voltage
+							apply_power();
+						}	
+					}else if(val<793){
+						RED_ON;
+						GREEN_OFF;
+						BLUE_OFF;
+					}else if(val<872){
+						RED_OFF;
+						GREEN_OFF;
+						BLUE_ON;
+					}else{
+						RED_OFF;
+						BLUE_OFF;
+						GREEN_ON;	
+					}
+				}	
+			}
+
+			if(adc_channel ==1 && d_seconds == 8){ //measure temp in active mode
+				if(val>330 && power_mode>=MODE_LOW ){// усвловие нужно, чтобы не задалбывать функцию - в ней будут логи
+					power_mode = MODE_OVERTEMP;
+					apply_power(); //overtemp. reduce current cunsumption
+				}
+			}
+
+			if(power_mode==MODE_IDLE && seconds>=7200){ //выключение через два часа из режима простоя
+				all_off();
+			}
+
+			if(seconds==0 && d_seconds<5 && power_mode>=MODE_LOW){
+				GIMSK = 0;//вырубим прерывания на первые 500мс, чтобы не кнопать кнопкой сильно часто
+			}else{
+				GIMSK = (1<<PCIE1);//interrupt on pin change0
+			}
+		}	
 	}	
 }

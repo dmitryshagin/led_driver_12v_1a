@@ -27,7 +27,7 @@ AVRDUDE = avrdude $(PROGRAMMER) -p $(DEVICE) -B 8
 
 COMPILE = avr-gcc -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE)
 
-all:	main.hex
+all:	main.hex main.eep
 
 .c.o:
 	$(COMPILE) -c $< -o $@
@@ -41,8 +41,14 @@ all:	main.hex
 flash:	all
 	$(AVRDUDE) -U flash:w:main.hex:i
 
+eeprom:
+	$(AVRDUDE) -U eeprom:w:main.eep
+
 clean:
 	rm -f main.hex main.elf main.eep $(OBJECTS)
+
+read:
+	$(AVRDUDE) -U eeprom:r:"eeprom_data.raw":r	
 
 main.elf: $(OBJECTS)
 	$(COMPILE) -o main.elf $(OBJECTS)
