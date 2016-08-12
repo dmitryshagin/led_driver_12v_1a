@@ -1,0 +1,23 @@
+C5       4.7nF                  C0402
+C6       10pF                   C0402
+C (4pc)  0.1uF                  C0402
+C9       2uF                    C0805         
+C(10pcs) 10uF                   C1206         
+
+R11-14   0k                     R0402         
+R4,R5    25mOhm                 R2512         
+R2,R3    3.01k                  R0402         
+R10      5.1k                   R0402         
+R7       6.04k                  R0402         
+R6       26.7k                  R0402         
+R8       31.2k                  R0402         
+R12      100k                   R0402         
+R1,R9    294k                   R0402         
+
+D1       CMDSH-3                SOD-323F      
+D2       BZX84C18LT1G           TO236         
+L1       IHLP-2525CZ-11 - 4.7uH DR73          
+
+U$1      LTC4012                QFN20         
+U$2      SI4816BDY              SO-8          
+U$3-4    SI7423DN               POWERPACK1212 
