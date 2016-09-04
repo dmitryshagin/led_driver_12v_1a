@@ -12,6 +12,12 @@
 #define MODE_HALF			5
 #define MODE_FULL			6
 
+
+#define LIMIT_9V  714
+#define LIMIT_10V 793
+#define LIMIT_11V 872
+#define LIMIT_12V 951
+
 #define BLUE_OFF 			(PORTA |=  (1<<PA4))
 #define BLUE_ON 			(PORTA &= ~(1<<PA4))
 #define GREEN_OFF 			(PORTA |=  (1<<PA3))
@@ -26,8 +32,9 @@
 #define DRIVER_OFF 			(PORTB &= ~(1<<PB0))
 
 
-volatile uint8_t power_mode, prev_power_mode, unlock_stage, d_seconds, adc_channel;
-volatile uint16_t val;
+volatile uint8_t power_mode, prev_power_mode, unlock_stage, d_seconds, adc_channel, vals_pos=0;
+volatile uint16_t vals[4];
+volatile uint32_t val;
 volatile uint32_t seconds;
 
 uint32_t nv_seconds_on[] EEMEM = {0,0,0,0,0,0,0};
@@ -41,6 +48,12 @@ uint16_t max_on[7];
 ISR(ADC_vect){
 	uint8_t theLowADC = ADCL;
 	val = ADCH<<8 | theLowADC;
+	// vals[vals_pos]=val;
+	// vals_pos+=1;
+	// if(vals_pos>4){
+	// 	vals_pos=0;
+	// };
+	// val = (vals[0]+vals[1]+vals[2]+vals[3])/4;
 	ADCSRA |= 1<<ADSC;	//start conversion
 }
 
@@ -68,6 +81,7 @@ void all_off(){
 	apply_power();
 	DRIVER_OFF;
 	OCR0B=0;
+	disable_adc();
 }
 
 void start_timer(){
@@ -75,6 +89,7 @@ void start_timer(){
 	TCNT1 = 53035; 		 //~=10Hz
 	TCCR1B = (1<<CS11); 
 	TIMSK1 = (1<<TOIE1); //timer1 interrupt enabled
+	enable_adc();
 	ADCSRA |= (1<<ADSC); //start ADC conversion
 }
 
@@ -101,8 +116,15 @@ int apply_power(void){
 		DRIVER_ON; 
 		set_sleep_mode(SLEEP_MODE_IDLE); 
 		sleep_disable();
+		// stop_timer();
 		start_timer();
 	}
+	// if(power_mode==MODE_IDLE)		{OCR0B=0;  }
+	// if(power_mode==MODE_LOW_VOLTAGE){OCR0B=0; }
+	// if(power_mode==MODE_OVERTEMP)	{OCR0B=0;  }
+	// if(power_mode==MODE_LOW)		{OCR0B=16; }
+	// if(power_mode==MODE_HALF)		{OCR0B=0;}
+	// if(power_mode==MODE_FULL)		{OCR0B=0;}
 	if(power_mode==MODE_IDLE)		{OCR0B=0;  }
 	if(power_mode==MODE_LOW_VOLTAGE){OCR0B=16; }
 	if(power_mode==MODE_OVERTEMP)	{OCR0B=8;  }
@@ -130,6 +152,7 @@ int apply_power(void){
 }
 
 void read_button(void){
+	_delay_ms(250);
 	uint32_t lock_timer=0;
 	start_timer();
 	if(LEFT_PRESSED){
@@ -149,6 +172,7 @@ void read_button(void){
 		while(LEFT_PRESSED){lock_timer+=1;if(lock_timer==100000){all_off();}};
 		BLUE_OFF;
 		_delay_ms(200);
+		return;
 	}
 	if(RIGHT_PRESSED){
 		RED_OFF;GREEN_OFF;BLUE_ON;
@@ -171,6 +195,14 @@ void read_button(void){
 
 }
 
+void enable_adc(){
+	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0) | (1<<ADIE);	// enable ADC on 1mhz/16 with interrupt
+}
+
+void disable_adc(){
+	ADCSRA = 0;
+}
+
 int main(void){
 	// PA0 - ADC IN
 	// PA2 - RED
@@ -181,7 +213,7 @@ int main(void){
 	// PB1 - hall1, PB2 - hall2
 
 	DDRA   = 0b11111110;
-	PORTA  = 0b00000001;
+	PORTA  = 0b00000000;
 	
 	DDRB   = 0b0001;
 	PORTB  = 0b0110;
@@ -193,7 +225,7 @@ int main(void){
 	GIMSK = (1<<PCIE1);//interrupt on pin change0
 
 	ADMUX = 0b10000000; // ADC0 - int
-	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0) | (1<<ADIE);	// enable ADC on 1mhz/16 with interrupt
+	enable_adc();
 	ADCSRA |= (1<<ADSC);							//start conversion
 
 
@@ -222,6 +254,8 @@ int main(void){
 		if(power_mode==MODE_OFF && unlock_stage==0){
 			seconds = 0;
 			d_seconds = 0;
+			stop_timer();
+			disable_adc();
 			set_sleep_mode(SLEEP_MODE_PWR_DOWN);
 			sleep_enable();
 			sleep_bod_disable();
@@ -231,7 +265,7 @@ int main(void){
 		if(seconds>1 && power_mode==MODE_OFF){
 			all_off();
 		}
-		if(unlock_stage==0){
+		if(unlock_stage==0 && power_mode!=MODE_OFF){
 			if(d_seconds==0){
 				adc_channel = 0;
 				ADMUX = 0b10000000; // ADC0 - int
@@ -257,20 +291,23 @@ int main(void){
 
 			// if((seconds%5==0) && ADMUX == 0b10000000){ //measure voltage in active mode
 			if(adc_channel ==0 && d_seconds == 4){ //measure voltage in active mode
-				if(val<714){
+				if(val<LIMIT_9V){
 					all_off();//completely discharged. turning off
 				}
-				if(power_mode!=MODE_OVERTEMP){ //show voltage always, except overtemp
-					if(val<755){
+				if(power_mode!=MODE_OVERTEMP && power_mode!=MODE_LOW_VOLTAGE && power_mode>=MODE_IDLE){ //show voltage always, except overtemp
+					if(val<((LIMIT_9V+LIMIT_10V)/2)){
+						RED_OFF;
+						GREEN_OFF;
+						BLUE_OFF;
 						if(power_mode>=MODE_LOW){ // усвловие нужно, чтобы не задалбывать функцию - в ней будут логи
 							power_mode = MODE_LOW_VOLTAGE;//low voltage
 							apply_power();
 						}	
-					}else if(val<793){
+					}else if(val<LIMIT_10V){
 						RED_ON;
 						GREEN_OFF;
 						BLUE_OFF;
-					}else if(val<872){
+					}else if(val<LIMIT_11V){
 						RED_OFF;
 						GREEN_OFF;
 						BLUE_ON;
@@ -293,11 +330,11 @@ int main(void){
 				all_off();
 			}
 
-			if(seconds==0 && d_seconds<5 && power_mode>=MODE_LOW){
-				GIMSK = 0;//вырубим прерывания на первые 500мс, чтобы не кнопать кнопкой сильно часто
-			}else{
-				GIMSK = (1<<PCIE1);//interrupt on pin change0
-			}
+			// if(seconds==0 && d_seconds<5 && power_mode>=MODE_LOW){
+			// 	GIMSK = 0;//вырубим прерывания на первые 500мс, чтобы не кнопать кнопкой сильно часто
+			// }else{
+			// 	GIMSK = (1<<PCIE1);//interrupt on pin change0
+			// }
 		}	
 	}	
 }
