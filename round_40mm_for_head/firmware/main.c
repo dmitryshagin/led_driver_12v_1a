@@ -1,8 +1,9 @@
 #include <avr/io.h>
 #include <avr/delay.h>
 #include <avr/interrupt.h>
-#include <avr/sleep.h> 
+#include <avr/sleep.h>
 #include <avr/eeprom.h>
+#include <string.h>
 
 #define MODE_OFF			0
 #define MODE_IDLE			1
@@ -41,6 +42,11 @@ uint32_t nv_seconds_on[] EEMEM = {0,0,0,0,0,0,0};
 uint16_t nv_times_on[]   EEMEM = {0,0,0,0,0,0,0};
 uint16_t nv_max_on[]     EEMEM = {0,0,0,0,0,0,0};
 
+uint8_t times_occured[7];
+const uint8_t zero_vals[7] = {0,0,0,0,0,0,0};
+
+uint8_t led_selected, old_led_selected = 0;
+
 uint32_t seconds_on[7];
 uint16_t times_on[7];
 uint16_t max_on[7];
@@ -48,12 +54,6 @@ uint16_t max_on[7];
 ISR(ADC_vect){
 	uint8_t theLowADC = ADCL;
 	val = ADCH<<8 | theLowADC;
-	// vals[vals_pos]=val;
-	// vals_pos+=1;
-	// if(vals_pos>4){
-	// 	vals_pos=0;
-	// };
-	// val = (vals[0]+vals[1]+vals[2]+vals[3])/4;
 	ADCSRA |= 1<<ADSC;	//start conversion
 }
 
@@ -81,13 +81,16 @@ void all_off(){
 	apply_power();
 	DRIVER_OFF;
 	OCR0B=0;
+	led_selected = 0;
+	old_led_selected = 0;
 	disable_adc();
+	clean_times_occured();
 }
 
 void start_timer(){
 	TCCR1A = 0;
 	TCNT1 = 53035; 		 //~=10Hz
-	TCCR1B = (1<<CS11); 
+	TCCR1B = (1<<CS11);
 	TIMSK1 = (1<<TOIE1); //timer1 interrupt enabled
 	enable_adc();
 	ADCSRA |= (1<<ADSC); //start ADC conversion
@@ -108,13 +111,13 @@ int apply_power(void){
 	}
 	if(power_mode==255){power_mode=MODE_IDLE;}
 	if(power_mode>MODE_FULL){power_mode=MODE_FULL;}
-	
-	if(power_mode==MODE_OFF){ 
-		DRIVER_OFF; 
+
+	if(power_mode==MODE_OFF){
+		DRIVER_OFF;
 		OCR0B=0;
 	}else{
-		DRIVER_ON; 
-		set_sleep_mode(SLEEP_MODE_IDLE); 
+		DRIVER_ON;
+		set_sleep_mode(SLEEP_MODE_IDLE);
 		sleep_disable();
 		// stop_timer();
 		start_timer();
@@ -137,7 +140,7 @@ int apply_power(void){
 		times_on[prev_power_mode] += 1;
 		if(max_on[prev_power_mode] < seconds){
 			max_on[prev_power_mode] = seconds;
-		}		
+		}
 		if(power_mode==MODE_LOW_VOLTAGE||power_mode==MODE_OFF){
 			//will store data only on power off or low batt to save eeprom
 			eeprom_write_block(&seconds_on, &nv_seconds_on, sizeof(seconds_on));
@@ -147,15 +150,17 @@ int apply_power(void){
 		prev_power_mode=power_mode;
 		seconds=0;
 	}
-	
+
 	return 0;
 }
 
 void read_button(void){
-	_delay_ms(250);
+	_delay_ms(200);
 	uint32_t lock_timer=0;
 	start_timer();
 	if(LEFT_PRESSED){
+		old_led_selected = led_selected;
+		led_selected = 0;
 		RED_OFF;GREEN_OFF;BLUE_ON;
 		if(power_mode==MODE_OFF){
 			if(unlock_stage==0 || unlock_stage==2){
@@ -166,30 +171,32 @@ void read_button(void){
 				power_mode-=1;
 			}else{
 				power_mode=1;
-			}	
-		}	
+			}
+		}
 		apply_power();
 		while(LEFT_PRESSED){lock_timer+=1;if(lock_timer==100000){all_off();}};
-		BLUE_OFF;
+		apply_led(old_led_selected);
 		_delay_ms(200);
 		return;
 	}
 	if(RIGHT_PRESSED){
+		old_led_selected = led_selected;
+		led_selected = 0;
 		RED_OFF;GREEN_OFF;BLUE_ON;
 		if(power_mode==MODE_OFF){
 			if(unlock_stage==1){
 				unlock_stage+=1;
 			}
-		}else{	
+		}else{
 			if(power_mode>=MODE_LOW){ // проскакиваем аварийные режимы
 				power_mode+=1;
 			}else{
 				power_mode=MODE_LOW;
-			}	
-		}	
+			}
+		}
 		apply_power();
 		while(RIGHT_PRESSED){};
-		BLUE_OFF;
+		apply_led(old_led_selected);
 		_delay_ms(200);
 	}
 
@@ -203,6 +210,37 @@ void disable_adc(){
 	ADCSRA = 0;
 }
 
+void clean_times_occured(){
+	memcpy(times_occured, zero_vals, 7);
+}
+
+uint8_t check_and_set_times(uint8_t idx){
+	uint8_t prev = times_occured[idx];
+	clean_times_occured();
+	times_occured[idx]=prev+1;
+	if(prev>4){
+		clean_times_occured();
+		return 1;
+	}else{
+		return 0;
+	}
+}
+
+void apply_led(uint8_t led){
+	if(led==0){
+		RED_OFF;GREEN_OFF;BLUE_OFF;
+	}
+	if(led==1){
+		RED_ON;GREEN_OFF;BLUE_OFF;
+	}
+	if(led==2){
+		RED_OFF;GREEN_OFF;BLUE_ON;
+	}
+	if(led==3){
+		RED_OFF;GREEN_ON;BLUE_OFF;
+	}
+}
+
 int main(void){
 	// PA0 - ADC IN
 	// PA2 - RED
@@ -214,7 +252,7 @@ int main(void){
 
 	DDRA   = 0b11111110;
 	PORTA  = 0b00000000;
-	
+
 	DDRB   = 0b0001;
 	PORTB  = 0b0110;
 
@@ -261,7 +299,7 @@ int main(void){
 			sleep_bod_disable();
 			sleep_cpu();
 			sleep_disable();
-		}	
+		}
 		if(seconds>1 && power_mode==MODE_OFF){
 			all_off();
 		}
@@ -269,8 +307,8 @@ int main(void){
 			if(d_seconds==0){
 				adc_channel = 0;
 				ADMUX = 0b10000000; // ADC0 - int
-			}	
-			if(d_seconds==5){	
+			}
+			if(d_seconds==5){
 				adc_channel = 1;
 				ADMUX = 0b10100010; // int reference and temp sensor
 			}
@@ -284,43 +322,45 @@ int main(void){
 				}
 			}else{
 				if(power_mode==MODE_OVERTEMP||power_mode==MODE_LOW_VOLTAGE){
-					RED_OFF;GREEN_OFF;BLUE_OFF;
+					apply_led(0);
 				}
 			}
-
 
 			// if((seconds%5==0) && ADMUX == 0b10000000){ //measure voltage in active mode
 			if(adc_channel ==0 && d_seconds == 4){ //measure voltage in active mode
 				if(val<LIMIT_9V){
-					all_off();//completely discharged. turning off
+					if(check_and_set_times(0)){
+					  all_off();//completely discharged. turning off
+					}
 				}
 				if(power_mode!=MODE_OVERTEMP && power_mode!=MODE_LOW_VOLTAGE && power_mode>=MODE_IDLE){ //show voltage always, except overtemp
 					if(val<((LIMIT_9V+LIMIT_10V)/2)){
-						RED_OFF;
-						GREEN_OFF;
-						BLUE_OFF;
-						if(power_mode>=MODE_LOW){ // усвловие нужно, чтобы не задалбывать функцию - в ней будут логи
+						if(power_mode>=MODE_LOW && check_and_set_times(1)){ // усвловие нужно, чтобы не задалбывать функцию - в ней будут логи
+							apply_led(0);
 							power_mode = MODE_LOW_VOLTAGE;//low voltage
 							apply_power();
-						}	
+						}
 					}else if(val<LIMIT_10V){
-						RED_ON;
-						GREEN_OFF;
-						BLUE_OFF;
+						if(led_selected==0 || check_and_set_times(2) ){
+							apply_led(1);
+						}
+						led_selected = 1;
 					}else if(val<LIMIT_11V){
-						RED_OFF;
-						GREEN_OFF;
-						BLUE_ON;
+						if(led_selected==0 || check_and_set_times(3)){
+							apply_led(2);
+						}
+						led_selected = 2;
 					}else{
-						RED_OFF;
-						BLUE_OFF;
-						GREEN_ON;	
+						if(led_selected==0 || check_and_set_times(4)){
+							apply_led(3);
+						}
+						led_selected = 3;
 					}
-				}	
+				}
 			}
 
 			if(adc_channel ==1 && d_seconds == 8){ //measure temp in active mode
-				if(val>330 && power_mode>=MODE_LOW ){// усвловие нужно, чтобы не задалбывать функцию - в ней будут логи
+				if(val>330 && power_mode>=MODE_LOW && check_and_set_times(6)){// усвловие нужно, чтобы не задалбывать функцию - в ней будут логи
 					power_mode = MODE_OVERTEMP;
 					apply_power(); //overtemp. reduce current cunsumption
 				}
@@ -335,6 +375,6 @@ int main(void){
 			// }else{
 			// 	GIMSK = (1<<PCIE1);//interrupt on pin change0
 			// }
-		}	
-	}	
+		}
+	}
 }
