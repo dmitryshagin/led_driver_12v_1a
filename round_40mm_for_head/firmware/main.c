@@ -42,8 +42,8 @@ uint32_t nv_seconds_on[] EEMEM = {0,0,0,0,0,0,0};
 uint16_t nv_times_on[]   EEMEM = {0,0,0,0,0,0,0};
 uint16_t nv_max_on[]     EEMEM = {0,0,0,0,0,0,0};
 
-uint8_t times_occured[7];
-const uint8_t zero_vals[7] = {0,0,0,0,0,0,0};
+uint8_t times_occured[6];
+const uint8_t zero_vals[6] = {0,0,0,0,0,0};
 
 uint8_t led_selected, old_led_selected = 0;
 
@@ -76,7 +76,7 @@ void all_off(){
 	unlock_stage = 0;
 	seconds = 0;
 	d_seconds = 0;
-	RED_OFF;GREEN_OFF;BLUE_OFF;
+	apply_led(0);
 	power_mode = MODE_OFF;
 	apply_power();
 	DRIVER_OFF;
@@ -165,6 +165,7 @@ void read_button(void){
 		if(power_mode==MODE_OFF){
 			if(unlock_stage==0 || unlock_stage==2){
 				unlock_stage+=1;
+				old_led_selected = 1;
 			}
 		}else{
 			if(power_mode>MODE_LOW){
@@ -186,6 +187,7 @@ void read_button(void){
 		if(power_mode==MODE_OFF){
 			if(unlock_stage==1){
 				unlock_stage+=1;
+				old_led_selected = 1;
 			}
 		}else{
 			if(power_mode>=MODE_LOW){ // проскакиваем аварийные режимы
@@ -211,11 +213,12 @@ void disable_adc(){
 }
 
 void clean_times_occured(){
-	memcpy(times_occured, zero_vals, 7);
+	memcpy(times_occured, zero_vals, sizeof(zero_vals));
 }
 
-uint8_t check_and_set_times(uint8_t idx){
-	uint8_t prev = times_occured[idx];
+int check_and_set_times(uint8_t idx){
+	uint8_t prev = 0;
+	prev = times_occured[idx];
 	clean_times_occured();
 	times_occured[idx]=prev+1;
 	if(prev>4){
@@ -263,17 +266,11 @@ int main(void){
 	GIMSK = (1<<PCIE1);//interrupt on pin change0
 
 	ADMUX = 0b10000000; // ADC0 - int
-	enable_adc();
-	ADCSRA |= (1<<ADSC);							//start conversion
 
-
-	all_off();
-
-	RED_ON;
+	apply_led(1);
 	DRIVER_ON;
 	OCR0B = 8;
 	_delay_ms(500);
-	// while(1){};
 	all_off();
 
 	eeprom_read_block(&seconds_on, &nv_seconds_on, sizeof(seconds_on));
@@ -333,7 +330,7 @@ int main(void){
 					  all_off();//completely discharged. turning off
 					}
 				}
-				if(power_mode!=MODE_OVERTEMP && power_mode!=MODE_LOW_VOLTAGE && power_mode>=MODE_IDLE){ //show voltage always, except overtemp
+				else if(power_mode!=MODE_OVERTEMP && power_mode!=MODE_LOW_VOLTAGE && power_mode>=MODE_IDLE){ //show voltage always, except overtemp
 					if(val<((LIMIT_9V+LIMIT_10V)/2)){
 						if(power_mode>=MODE_LOW && check_and_set_times(1)){ // усвловие нужно, чтобы не задалбывать функцию - в ней будут логи
 							apply_led(0);
@@ -358,17 +355,20 @@ int main(void){
 					}
 				}
 			}
+			while(d_seconds==4){}
 
 			if(adc_channel ==1 && d_seconds == 8){ //measure temp in active mode
-				if(val>330 && power_mode>=MODE_LOW && check_and_set_times(6)){// усвловие нужно, чтобы не задалбывать функцию - в ней будут логи
+				if(val>330 && power_mode>=MODE_LOW && check_and_set_times(5)){// усвловие нужно, чтобы не задалбывать функцию - в ней будут логи
 					power_mode = MODE_OVERTEMP;
 					apply_power(); //overtemp. reduce current cunsumption
 				}
 			}
+			while(d_seconds==8){}
 
 			if(power_mode==MODE_IDLE && seconds>=7200){ //выключение через два часа из режима простоя
 				all_off();
 			}
+
 
 			// if(seconds==0 && d_seconds<5 && power_mode>=MODE_LOW){
 			// 	GIMSK = 0;//вырубим прерывания на первые 500мс, чтобы не кнопать кнопкой сильно часто
